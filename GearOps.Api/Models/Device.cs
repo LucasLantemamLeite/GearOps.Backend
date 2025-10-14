@@ -4,19 +4,18 @@ namespace GearOps.Api.Models;
 
 public sealed class Device
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = null!;
     public EType Type { get; set; }
     public EStatus Status { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? Start { get; set; }
     public DateTime? Return { get; set; }
-    public bool Active { get; set; }
+    public bool Active { get; set; } = true;
 
     public Device(string name, int type, int status, DateTime? startDate, DateTime? returnDate)
     {
-        Id = Guid.NewGuid();
         Name = name;
         Type = (EType)type;
         Status = (EStatus)status;
