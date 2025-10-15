@@ -45,7 +45,8 @@ Por limitações da plataforma, decidi criar o **GearOps** utilizando uma aborda
  ┣  ┣ 📄 GearOps.Api.csproj
  ┣  ┗ 📝 Program.cs
  ┣ 📄 .gitignore
- ┣ 📄 dockerfile
+ ┣ 📄 dockerfile.bd
+ ┣ 📄 dockerfile.ef
  ┣ 📄 GearOpsSolution.sln
  ┗ 📄 ReadMe.md
 ```
@@ -60,28 +61,103 @@ Por limitações da plataforma, decidi criar o **GearOps** utilizando uma aborda
 
 ### 🐳 Docker
 
-- O projeto possui um **Dockerfile** para testes em redes privadas, facilitando a execução e isolamento do ambiente.
+O projeto possui dois arquivos **Dockerfile** para testes em redes privadas, facilitando a execução e isolamento do ambiente:
+
+- 1. O **dockerfile.bd** é responsável por compilar e rodar a aplicação do ASP.NET.
+
+- 2. O **dockerfile.ef** é responsável por aplicação as migrações do banco de dados do PostGres que só é executado com o docker-compose.
 
 ---
 
-### 🚀 Rodar container Docker - Dockerfile
+### 🚀 Rodar container Docker - dockerfile.bd
 
-1. Compilar a imagem:
+1. Clonar esse Repositório:
 
    ```
-   docker build -t gearops-backend
+   git clone https://github.com/LucasLantemamLeite/GearOps.Backend.git
    ```
 
-2. Rodar o container em ip privado:
+2. Compilar a imagem:
+
+   ```
+   docker build -f dockerfile.bd -t gearops-backend .
+   ```
+
+3. Rodar o container em ip privado:
 
    ```
    docker run -d -p 8080:8080 --name gearops-server gearops-backend
    ```
 
-3. Verificar se está rodando:
+4. Verificar se está rodando:
    ```
    http://localhost/v1/health -> verifica se está rodando localmente (localhost)
    http://'ip-da-máquina'/v1/health -> verifica se está rodando em rede privada
+   ```
+
+---
+
+### 🚀 Rodar o container via docker-compose
+
+1. Criar um arquivo **docker-compose.yml** na raiz da aplicação (fora da pasta do GearOps.Backend)
+
+2. Aplicação os seguitnes serviços no arquivo do docker-compose:
+
+```yml
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres_db
+    restart: always
+    networks:
+      - gearops_networks
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: GearOpsDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    container_name: gearops-server
+    build:
+      context: ./GearOps.Backend
+      dockerfile: dockerfile.bd
+    networks:
+      - gearops_networks
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=GearOpsDb;Username=postgres;Password=postgres
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  migrations:
+    build:
+      context: ./GearOps.Backend
+      dockerfile: dockerfile.ef
+    depends_on:
+      - postgres
+    networks:
+      - gearops_networks
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=GearOpsDb;Username=postgres;Password=postgres
+    command: dotnet ef database update
+
+volumes:
+  postgres_data:
+
+networks:
+  gearops_networks:
+    driver: bridge
+```
+
+3. Comando para compilação:
+   ```
+   docker-compose up -> Para rodar com logs do container
+   docker-compose up -d -> Para rodar em segundo plano
    ```
 
 ---
