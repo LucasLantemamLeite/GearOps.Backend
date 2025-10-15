@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS ef
+WORKDIR /app
+
+COPY GearOps.Api/GearOps.Api.csproj ./
+RUN dotnet restore
+
+COPY GearOps.Api/. ./
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
