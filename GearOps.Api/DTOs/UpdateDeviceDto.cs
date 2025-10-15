@@ -5,7 +5,7 @@ namespace GearOps.Api.DTOs;
 public record UpdateDeviceDto
 {
     [Required(ErrorMessage = "O identificador do dispositivo é obrigatório.")]
-    public Guid Id { get; init; }
+    public required Guid Id { get; init; }
 
     [Required(ErrorMessage = "O nome do dispositivo é obrigatório.")]
     [MaxLength(30, ErrorMessage = "O nome do dispositivo deve possuir no máximo 30 caracteres.")]
