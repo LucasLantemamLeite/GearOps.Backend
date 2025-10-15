@@ -1,3 +1,5 @@
+using GearOps.Api.Hubs;
+
 namespace GearOps.Api.Configurations.App;
 
 public static class AppConfig
@@ -25,6 +27,8 @@ public static class AppConfig
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.MapHub<DeviceHub>("/v1/devicesHub");
 
         app.UseHealthChecks("/v1/health");
 
