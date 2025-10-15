@@ -1,7 +1,9 @@
 using GearOps.Api.Data.Context;
 using GearOps.Api.DTOs;
+using GearOps.Api.Hubs;
 using GearOps.Api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace GearOps.Api.Controllers;
@@ -9,7 +11,7 @@ namespace GearOps.Api.Controllers;
 [ApiController]
 [Route("v1")]
 [Tags("Devices")]
-public sealed class CreateDeviceController(AppDbContext context) : ControllerBase
+public sealed class CreateDeviceController(AppDbContext context, IHubContext<DeviceHub> hub) : ControllerBase
 {
     [HttpPost("device")]
     public async Task<IActionResult> CreateAsync([FromBody] CreateDeviceDto deviceDto)
@@ -30,6 +32,8 @@ public sealed class CreateDeviceController(AppDbContext context) : ControllerBas
 
         if (rows is 0)
             return BadRequest(new { Message = $"Falha ao adicionar o dispositivo de nome: '{deviceDto.Name}'" });
+
+        await hub.Clients.All.SendAsync("DeviceCreated", device);
 
         return Ok(new { Message = $"Máquina com nome: '{deviceDto.Name}' adicionado com sucesso." });
     }

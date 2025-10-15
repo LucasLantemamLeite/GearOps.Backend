@@ -1,6 +1,8 @@
 using GearOps.Api.Data.Context;
 using GearOps.Api.DTOs;
+using GearOps.Api.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace GearOps.Api.Controllers;
@@ -8,7 +10,7 @@ namespace GearOps.Api.Controllers;
 [ApiController]
 [Route("v1")]
 [Tags("Devices")]
-public sealed class DeleteDeviceController(AppDbContext context) : ControllerBase
+public sealed class DeleteDeviceController(AppDbContext context, IHubContext<DeviceHub> hub) : ControllerBase
 {
     [HttpDelete("device")]
     public async Task<IActionResult> DeleteAsync([FromBody] DeleteDeviceDto deviceDto)
@@ -27,6 +29,8 @@ public sealed class DeleteDeviceController(AppDbContext context) : ControllerBas
 
         if (rows is 0)
             return BadRequest(new { Message = $"Falha ao deletar o dispositivo de nome: 1{existingDevice.Name}'" });
+
+        await hub.Clients.All.SendAsync("DeviceDeleted", existingDevice);
 
         return Ok(new { Message = $"Máquina com nome: '{existingDevice.Name}' removido com sucesso." });
     }

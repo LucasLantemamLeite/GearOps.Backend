@@ -1,7 +1,9 @@
 using GearOps.Api.Data.Context;
 using GearOps.Api.DTOs;
 using GearOps.Api.Enums;
+using GearOps.Api.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace GearOps.Api.Controllers;
@@ -9,7 +11,7 @@ namespace GearOps.Api.Controllers;
 [ApiController]
 [Route("v1")]
 [Tags("Devices")]
-public sealed class UpdateDeviceController(AppDbContext context) : ControllerBase
+public sealed class UpdateDeviceController(AppDbContext context, IHubContext<DeviceHub> hub) : ControllerBase
 {
     [HttpPut("device")]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateDeviceDto deviceDto)
@@ -40,6 +42,8 @@ public sealed class UpdateDeviceController(AppDbContext context) : ControllerBas
 
         if (rows is 0)
             return BadRequest(new { Message = $"Falha ao atualizar o dispositivo de nome: 1{deviceDto.Name}'" });
+
+        await hub.Clients.All.SendAsync("DeviceUpdated", existingDevice);
 
         return Ok(new { Message = $"Máquina com nome: '{deviceDto.Name}' atualizado com sucesso." });
     }
