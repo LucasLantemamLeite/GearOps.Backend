@@ -1,0 +1,23 @@
+# Stage 1 - Build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+
+WORKDIR /app
+
+COPY GearOps.Api/GearOps.Api.csproj ./ 
+
+RUN dotnet restore
+
+COPY GearOps.Api/ ./
+
+RUN dotnet publish -c Release -o /app/build
+
+# Stage 2 - Run
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runner
+
+WORKDIR /app
+
+COPY --from=build /app/build .
+
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "GearOps.Api.dll"]
