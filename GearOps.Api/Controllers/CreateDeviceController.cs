@@ -17,7 +17,7 @@ public sealed class CreateDeviceController(AppDbContext context) : ControllerBas
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var existingDevice = await context.Devices.FirstOrDefaultAsync(d => d.Name == deviceDto.Name);
+        var existingDevice = await context.Devices.AsNoTracking().FirstOrDefaultAsync(d => d.Name == deviceDto.Name);
 
         if (existingDevice is not null)
             return BadRequest(new { Message = "Já existe uma máquina com mesmo nome registrado no sistema." });
@@ -29,7 +29,7 @@ public sealed class CreateDeviceController(AppDbContext context) : ControllerBas
         var rows = await context.SaveChangesAsync();
 
         if (rows is 0)
-            return BadRequest(new { Message = $"Falha ao adicionar o dispositivo de nome: {deviceDto.Name}" });
+            return BadRequest(new { Message = $"Falha ao adicionar o dispositivo de nome: '{deviceDto.Name}'" });
 
         return Ok(new { Message = $"Máquina com nome: '{deviceDto.Name}' adicionado com sucesso." });
     }
