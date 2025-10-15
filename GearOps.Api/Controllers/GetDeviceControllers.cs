@@ -17,6 +17,6 @@ public sealed class GetDeviceController(AppDbContext context) : ControllerBase
         if (devices.Count is 0)
             return NotFound(new { Message = "Nenhuma máquina registrada no sistema." });
 
-        return Ok(new { Message = $"Entregue as {devices.Count} registrados no sistema.", Data = devices });
+        return Ok(new { Message = $"Entregue as {devices.Count} máquinas registrados no sistema.", Data = devices });
     }
 }
