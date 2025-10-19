@@ -110,66 +110,91 @@ O projeto possui dois arquivos **Dockerfile** para testes em redes privadas, fac
 
 ### 🚀 Rodar o container via docker-compose
 
-1. Criar um arquivo **docker-compose.yml** na raiz da aplicação (fora da pasta do GearOps.Backend)
+1. Clonar o Repositório do Frontend da aplicação
 
-2. Aplicação os seguitnes serviços no arquivo do docker-compose:
+   ```
+   git clone https://github.com/LucasLantemamLeite/GearOps.Frontend.git
+   ```
 
-```yml
-services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: postgres_db
-    restart: always
-    networks:
-      - gearops_networks
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: GearOpsDb
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+2. Criar um arquivo **docker-compose.yml** na raiz da aplicação (fora da pasta do GearOps.Backend)
 
-  backend:
-    container_name: gearops-server
-    build:
-      context: ./GearOps.Backend
-      dockerfile: dockerfile.bd
-    networks:
-      - gearops_networks
-    environment:
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=GearOpsDb;Username=postgres;Password=postgres
-    ports:
-      - "8080:8080"
-    depends_on:
-      - postgres
+3. Aplicação os seguintes serviços no arquivo do docker-compose:
 
-  migrations:
-    build:
-      context: ./GearOps.Backend
-      dockerfile: dockerfile.ef
-    depends_on:
-      - postgres
-    networks:
-      - gearops_networks
-    environment:
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=GearOpsDb;Username=postgres;Password=postgres
-    command: dotnet ef database update
+   ```yml
+   services:
+     postgres:
+       image: postgres:16-alpine
+       container_name: postgres_db
+       restart: always
+       networks:
+         - gearops_networks
+       environment:
+         POSTGRES_USER: postgres
+         POSTGRES_PASSWORD: postgres
+         POSTGRES_DB: GearOpsDb
+       ports:
+         - "5432:5432"
+       volumes:
+         - postgres_data:/var/lib/postgresql/data
 
-volumes:
-  postgres_data:
+     backend:
+       container_name: gearops-server
+       build:
+         context: ./GearOps.Backend
+         dockerfile: dockerfile.bd
+       networks:
+         - gearops_networks
+       environment:
+         - ConnectionStrings__DefaultConnection=Host=postgres;Database=GearOpsDb;Username=postgres;Password=postgres
+       ports:
+         - "8080:8080"
+       depends_on:
+         - postgres
 
-networks:
-  gearops_networks:
-    driver: bridge
-```
+     frontend:
+       build: ./GearOps.frontend
+       ports:
+         - "3000:3000"
+       depends_on:
+         - backend
+       networks:
+         - gearops_networks
 
-3. Comando para compilação:
+     migrations:
+       build:
+         context: ./GearOps.Backend
+         dockerfile: dockerfile.ef
+       depends_on:
+         - postgres
+       networks:
+         - gearops_networks
+       environment:
+         - ConnectionStrings__DefaultConnection=Host=postgres;Database=GearOpsDb;Username=postgres;Password=postgres
+       command: dotnet ef database update
+
+   volumes:
+     postgres_data:
+
+   networks:
+     gearops_networks:
+       driver: bridge
+   ```
+
+4. Comando para rodar a aplicação:
+
    ```
    docker-compose up -> Para rodar com logs do container
    docker-compose up -d -> Para rodar em segundo plano
    ```
+
+5. Substituir a politica de cors da aplicação (backend) para o ip da máquina (digite ipconfig no cmd) caso queria testar em rede privada
+
+   - Arquivo: [`GearOps.Backend/GearOps.Api/Configurations/Builder/BuilderConfig.cs`](./GearOps.Api/Configurations/Builder/BuilderConfig.cs)
+
+6. Alterar a baseUrl do axios nos services e o HubConnectionBuilder na seção de devices
+
+   - Arquivo baseUrl: [`GearOps.Frontend/app/services/helpers/ApiService.ts`](../GearOps.Frontend/app/services/helpers/ApiService.ts)
+   - Arquivo signalR: [`GearOps.Frontend/app/blocks/DevicesBLock.vue`](../GearOps.Frontend/app/blocks/DevicesBlock.vue)
 
 ---
 

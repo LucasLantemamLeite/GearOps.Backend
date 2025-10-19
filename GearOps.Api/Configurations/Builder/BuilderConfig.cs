@@ -8,6 +8,7 @@ public static class BuilderConfig
     {
         builder.Services.AddSignalR();
 
+        // Alterar para permitir o teste via ip privado ao rodar no docker-compose
         builder.Services.AddCors(options => options.AddPolicy("FrontendPolicy", policy => policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
         builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
