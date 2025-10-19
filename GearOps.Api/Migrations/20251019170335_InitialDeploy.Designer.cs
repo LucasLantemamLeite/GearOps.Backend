@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GearOps.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251014225046_InitialDeploy")]
+    [Migration("20251019170335_InitialDeploy")]
     partial class InitialDeploy
     {
         /// <inheritdoc />
@@ -41,7 +41,7 @@ namespace GearOps.Api.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(30)")
+                        .HasColumnType("varchar(20)")
                         .HasColumnName("Name");
 
                     b.Property<DateTime?>("Return")
@@ -65,6 +65,9 @@ namespace GearOps.Api.Migrations
                         .HasColumnName("UpdatedAt");
 
                     b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Name" }, "Unique_Key_Name_Devices")
+                        .IsUnique();
 
                     b.ToTable("Devices", (string)null);
                 });

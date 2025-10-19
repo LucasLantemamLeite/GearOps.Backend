@@ -38,7 +38,7 @@ namespace GearOps.Api.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(30)")
+                        .HasColumnType("varchar(20)")
                         .HasColumnName("Name");
 
                     b.Property<DateTime?>("Return")

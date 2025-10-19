@@ -16,7 +16,7 @@ namespace GearOps.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "varchar(30)", nullable: false),
+                    Name = table.Column<string>(type: "varchar(20)", nullable: false),
                     Type = table.Column<short>(type: "smallint", nullable: false),
                     Status = table.Column<short>(type: "smallint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamptz", nullable: false),
@@ -29,6 +29,12 @@ namespace GearOps.Api.Migrations
                 {
                     table.PrimaryKey("PK_Devices", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "Unique_Key_Name_Devices",
+                table: "Devices",
+                column: "Name",
+                unique: true);
         }
 
         /// <inheritdoc />
