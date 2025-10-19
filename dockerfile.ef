@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS ef
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS ef
 WORKDIR /app
 
 COPY GearOps.Api/GearOps.Api.csproj ./
