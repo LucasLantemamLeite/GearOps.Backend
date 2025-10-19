@@ -12,7 +12,7 @@ public sealed class GetDeviceController(AppDbContext context) : ControllerBase
     [HttpGet("device/{count:int}/{page:int}")]
     public async Task<IActionResult> GetAsync([FromRoute] int count, [FromRoute] int page)
     {
-        var devices = await context.Devices.AsNoTracking().Skip((page - 1) * count).Take(count).ToListAsync();
+        var devices = await context.Devices.AsNoTracking().OrderBy(x => x.Type).Skip((page - 1) * count).Take(count).ToListAsync();
 
         if (devices.Count is 0)
             return NotFound(new { Message = "Nenhuma máquina registrada no sistema." });
