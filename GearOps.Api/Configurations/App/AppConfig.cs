@@ -28,6 +28,8 @@ public static class AppConfig
             app.UseSwaggerUI();
         }
 
+        app.UseCors("FrontendPolicy");
+
         app.MapHub<DeviceHub>("/v1/devicesHub");
 
         app.UseHealthChecks("/v1/health");
