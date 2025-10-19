@@ -8,7 +8,7 @@ public record UpdateDeviceDto
     public required Guid Id { get; init; }
 
     [Required(ErrorMessage = "O nome do dispositivo é obrigatório.")]
-    [MaxLength(30, ErrorMessage = "O nome do dispositivo deve possuir no máximo 30 caracteres.")]
+    [MaxLength(20, ErrorMessage = "O nome do dispositivo deve possuir no máximo 30 caracteres.")]
     public required string Name { get; init; }
 
     [Required(ErrorMessage = "O tipo do dispositivo é obrigatório.")]

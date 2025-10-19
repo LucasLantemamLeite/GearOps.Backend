@@ -14,7 +14,7 @@ public sealed class DeviceMap : IEntityTypeConfiguration<Device>
 
         builder.Property(x => x.Name)
             .HasColumnName("Name")
-            .HasColumnType("varchar(30)")
+            .HasColumnType("varchar(20)")
             .IsRequired();
 
         builder.HasIndex(x => x.Name, "Unique_Key_Name_Devices")
