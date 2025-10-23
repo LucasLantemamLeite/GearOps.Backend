@@ -15,8 +15,10 @@ public sealed class GetDeviceController(AppDbContext context) : ControllerBase
         var devices = await context.Devices.AsNoTracking().OrderBy(x => x.Type).Skip((page - 1) * count).Take(count).ToListAsync();
 
         if (devices.Count is 0)
-            return NotFound(new { Message = "Nenhuma máquina registrada no sistema." });
+            return Ok(new { Message = "Nenhuma máquina registrada no sistema." });
 
-        return Ok(new { Message = $"Entregue as {devices.Count} máquinas registrados no sistema.", Data = devices });
+        var items = devices.Count;
+        
+        return Ok(new { Message = $"Entregue {(items <= 1 ? " " : "as")} {items} {(items <= 1 ? "máquina": "máquinas")} registrados no sistema.", Data = devices });
     }
 }
