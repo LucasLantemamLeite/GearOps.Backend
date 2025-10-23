@@ -35,6 +35,6 @@ public sealed class CreateDeviceController(AppDbContext context, IHubContext<Dev
 
         await hub.Clients.All.SendAsync("DeviceCreated", device);
 
-        return Ok(new { Message = $"Máquina com nome: '{deviceDto.Name}' adicionado com sucesso." });
+        return Ok(new { Message = $"'{deviceDto.Name}' adicionado com sucesso." });
     }
 }
