@@ -26,7 +26,7 @@ public sealed class UpdateDeviceController(AppDbContext context, IHubContext<Dev
 
         var existingName = await context.Devices.FirstOrDefaultAsync(d => d.Name == deviceDto.Name);
 
-        if (existingName is not null)
+        if (existingName is not null && existingName.Id != deviceDto.Id)
             return BadRequest(new { Message = "Já existe uma máquina com mesmo nome registrado no sistema." });
 
         existingDevice.UpdatedAt = DateTime.UtcNow;
@@ -45,6 +45,6 @@ public sealed class UpdateDeviceController(AppDbContext context, IHubContext<Dev
 
         await hub.Clients.All.SendAsync("DeviceUpdated", existingDevice);
 
-        return Ok(new { Message = $"Máquina com nome: '{deviceDto.Name}' atualizado com sucesso." });
+        return Ok(new { Message = $"'{deviceDto.Name}' atualizado com sucesso." });
     }
 }
