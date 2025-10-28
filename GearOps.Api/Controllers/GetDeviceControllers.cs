@@ -9,16 +9,14 @@ namespace GearOps.Api.Controllers;
 [Tags("Devices")]
 public sealed class GetDeviceController(AppDbContext context) : ControllerBase
 {
-    [HttpGet("device/{count:int}/{page:int}")]
-    public async Task<IActionResult> GetAsync([FromRoute] int count, [FromRoute] int page)
+    [HttpGet("device")]
+    public async Task<IActionResult> GetAsync()
     {
-        var devices = await context.Devices.AsNoTracking().OrderBy(x => x.Type).Skip((page - 1) * count).Take(count).ToListAsync();
+        var devices = await context.Devices.AsNoTracking().OrderBy(x => x.Type).ToListAsync();
 
         if (devices.Count is 0)
             return Ok(new { Message = "Nenhuma máquina registrada no sistema." });
 
-        var items = devices.Count;
-        
-        return Ok(new { Message = $"Entregue {(items <= 1 ? " " : "as")} {items} {(items <= 1 ? "máquina": "máquinas")} registrados no sistema.", Data = devices });
+        return Ok(new { Data = devices });
     }
 }
