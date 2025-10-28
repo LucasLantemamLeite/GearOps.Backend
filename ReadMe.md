@@ -102,8 +102,8 @@ O projeto possui dois arquivos **Dockerfile** para testes em redes privadas, fac
 
 4. Verificar se está rodando:
    ```
-   http://localhost/v1/health -> verifica se está rodando localmente (localhost)
-   http://'ip-da-máquina'/v1/health -> verifica se está rodando em rede privada
+   http://localhost:5059/v1/health -> verifica se está rodando localmente (localhost)
+   http://'ip-da-máquina':8080/v1/health -> verifica se está rodando em rede privada
    ```
 
 ---
@@ -187,17 +187,12 @@ O projeto possui dois arquivos **Dockerfile** para testes em redes privadas, fac
    docker-compose up -d -> Para rodar em segundo plano
    ```
 
-5. Substituir a politica de cors da aplicação (backend) para o ip da máquina (digite ipconfig no cmd) caso queria testar em rede privada
+5. Substituir a política de Cors da aplicação (backend) para o ip da máquina caso queria testar em rede privada
 
    - Arquivo: [`GearOps.Backend/GearOps.Api/Configurations/Builder/BuilderConfig.cs`](./GearOps.Api/Configurations/Builder/BuilderConfig.cs)
 
 6. Alterar a baseUrl do axios nos services e o HubConnectionBuilder na seção de devices
 
-   - Arquivo baseUrl: [`GearOps.Frontend/app/services/helpers/ApiService.ts`](../GearOps.Frontend/app/services/helpers/ApiService.ts)
-   - Arquivo signalR: [`GearOps.Frontend/app/blocks/DevicesBLock.vue`](../GearOps.Frontend/app/blocks/DevicesBlock.vue)
+   - Arquivo baseUrl: [`GearOps.Frontend/app/services/requests/api.ts`](../GearOps.Frontend/app/services/requests/api.ts)
 
----
-
-### 📖 Wiki
-
-Para mais informações, consulte a [Wiki do projeto](https://github.com/LucasLantemamLeite/GearOps.Backend/wiki).
+   - Arquivo signalR: [`GearOps.Frontend/app/services/signalR/connectionHub.ts`](../GearOps.Frontend/app/services/signalR/connectionHub.ts)
