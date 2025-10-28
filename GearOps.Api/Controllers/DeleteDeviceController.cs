@@ -23,14 +23,13 @@ public sealed class DeleteDeviceController(AppDbContext context, IHubContext<Dev
         if (existingDevice is null)
             return NotFound(new { Message = "Nenhum máquina foi encontrada com esse identificador." });
 
-  
         context.Devices.Remove(existingDevice);
 
         var rows = await context.SaveChangesAsync();
-        
+
         if (rows is 0)
-            return BadRequest(new { Message = $"Falha ao deletar o dispositivo de nome: 1{existingDevice.Name}'" });
-    
+            return BadRequest(new { Message = $"Falha ao deletar o dispositivo '{existingDevice.Name}'" });
+
         await hub.Clients.All.SendAsync("DeviceDeleted", existingDevice);
 
         return Ok(new { Message = $"'{existingDevice.Name}' removido com sucesso." });
