@@ -41,7 +41,7 @@ public sealed class UpdateDeviceController(AppDbContext context, IHubContext<Dev
         var rows = await context.SaveChangesAsync();
 
         if (rows is 0)
-            return BadRequest(new { Message = $"Falha ao atualizar o dispositivo de nome: 1{deviceDto.Name}'" });
+            return BadRequest(new { Message = $"Falha ao atualizar o dispositivo '{deviceDto.Name}'" });
 
         await hub.Clients.All.SendAsync("DeviceUpdated", existingDevice);
 
